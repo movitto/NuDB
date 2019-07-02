@@ -44,7 +44,7 @@ namespace nudb {
       private:
         boost::shared_mutex m_;
 
-        boost::posix_time::ptime start_;
+        std::chrono::time_point<std::chrono::steady_clock> start_;
         samples_t samples_;
         index_t index_;
     };

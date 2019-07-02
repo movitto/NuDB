@@ -17,7 +17,7 @@ namespace nudb {
    void profile_t<_>::
    reset(){
       detail::unique_lock_type m{m_};
-      start_ = boost::posix_time::microsec_clock::local_time();
+      start_ = std::chrono::steady_clock::now();
       for(int i = 0; i < (int)profile_op::last; ++i){
         index_[(profile_op)i] = 0;
         samples_[(profile_op)i].reserve(PROFILE_SIZE);
@@ -30,9 +30,10 @@ namespace nudb {
    void profile_t<_>::
    sample(profile_op op){
       detail::unique_lock_type m{m_};
-      boost::posix_time::ptime now = boost::posix_time::microsec_clock::local_time();
-      boost::posix_time::time_duration dur = now - start_;
-      samples_[op][index_[op]++] = dur.total_nanoseconds();
+      std::chrono::time_point<std::chrono::steady_clock> now =
+        std::chrono::steady_clock::now();
+      auto dur = std::chrono::duration_cast<std::chrono::milliseconds>(now - start_);
+      samples_[op][index_[op]++] = dur.count();
       start_ = now;
 
       if(index_[op] >= PROFILE_SIZE) index_[op] = 0;
