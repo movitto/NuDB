@@ -32,11 +32,17 @@ namespace nudb {
       detail::unique_lock_type m{m_};
       std::chrono::time_point<std::chrono::steady_clock> now =
         std::chrono::steady_clock::now();
-      auto dur = std::chrono::duration_cast<std::chrono::microseconds>(now - start_);
-      samples_[op][index_[op]++] = dur.count();
-      start_ = now;
+      auto dur = std::chrono::duration_cast<std::chrono::milliseconds>(now - start_);
 
-      if(index_[op] >= PROFILE_SIZE) index_[op] = 0;
+      if(dur.count() > 1000){
+        ++index_[op];
+        if(index_[op] >= PROFILE_SIZE)
+          index_[op] = 0;
+        samples_[op][index_[op]] = 0;
+        start_ = now;
+      }
+
+      samples_[op][index_[op]] += 1;
     }
 
    template<class _>
