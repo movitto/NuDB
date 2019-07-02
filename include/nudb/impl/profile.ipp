@@ -32,7 +32,7 @@ namespace nudb {
       detail::unique_lock_type m{m_};
       std::chrono::time_point<std::chrono::steady_clock> now =
         std::chrono::steady_clock::now();
-      auto dur = std::chrono::duration_cast<std::chrono::milliseconds>(now - start_);
+      auto dur = std::chrono::duration_cast<std::chrono::microseconds>(now - start_);
       samples_[op][index_[op]++] = dur.count();
       start_ = now;
 
