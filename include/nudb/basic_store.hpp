@@ -10,6 +10,7 @@
 
 #include <nudb/context.hpp>
 #include <nudb/file.hpp>
+#include <nudb/profile.hpp>
 #include <nudb/type_traits.hpp>
 #include <nudb/detail/cache.hpp>
 #include <nudb/detail/gentex.hpp>
@@ -128,6 +129,10 @@ private:
     };
 
     std::unique_ptr<context, deleter> ctx_;
+
+#if NUDB_PROFILE_RUNTIME
+    profile profile_;
+#endif
 
 public:
     /** Default constructor.
@@ -284,6 +289,12 @@ public:
     */
     std::size_t
     block_size() const;
+
+#if NUDB_PROFILE_RUNTIME
+    profile& runtime_profile(){
+      return profile_;
+    }
+#endif
 
     /** Close the database.
 

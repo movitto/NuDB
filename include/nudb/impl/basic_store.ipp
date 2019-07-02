@@ -185,6 +185,10 @@ open(
     s_.emplace(std::move(*s));
     open_ = true;
     ctx_->insert(*this);
+
+#if NUDB_PROFILE_RUNTIME
+    profile_.reset();
+#endif
 }
 
 template<class Hasher, class File>
@@ -233,6 +237,9 @@ fetch(
         ec = ec_;
         return;
     }
+#if NUDB_PROFILE_RUNTIME
+    profile_.sample(profile_op::fetch);
+#endif
     auto const h =
         hash(key, s_->kh.key_size, s_->hasher);
     shared_lock_type m{m_};
@@ -280,6 +287,9 @@ insert(
         ec = ec_;
         return;
     }
+#if NUDB_PROFILE_RUNTIME
+    profile_.sample(profile_op::insert);
+#endif
     // Data Record
     BOOST_ASSERT(size > 0);                     // zero disallowed
     BOOST_ASSERT(size <= field<uint32_t>::max); // too large
